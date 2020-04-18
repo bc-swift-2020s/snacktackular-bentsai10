@@ -116,8 +116,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="sortSegmentedControl" destination="tEt-Bv-Sge" id="wbX-GD-Onw"/>
-                        <outlet property="tableView" destination="KLh-YF-eBN" id="sTP-6M-9U5"/>
+                        <outlet property="sortSegmentedControl" destination="tEt-Bv-Sge" id="nXg-cM-vzV"/>
+                        <outlet property="tableView" destination="KLh-YF-eBN" id="J5r-bZ-na3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -380,12 +380,14 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="addressField" destination="4WS-yq-rPw" id="P0N-6s-snq"/>
-                        <outlet property="averageRatingLabel" destination="B7N-4G-a6e" id="wSr-er-pBu"/>
-                        <outlet property="collectionView" destination="JfI-qt-dbd" id="hnO-GP-dfz"/>
-                        <outlet property="mapView" destination="JNI-Pb-qxM" id="SFM-HF-0db"/>
-                        <outlet property="nameField" destination="4QE-cW-8Sq" id="mlK-Cz-ISL"/>
-                        <outlet property="tableView" destination="9OL-9e-xjv" id="3bb-n3-fTc"/>
+                        <outlet property="addressField" destination="4WS-yq-rPw" id="i21-m1-9UZ"/>
+                        <outlet property="averageRatingLabel" destination="5Eo-jn-BIH" id="aNV-XY-OgT"/>
+                        <outlet property="cancelBarButton" destination="S5P-gk-K1R" id="HmG-iY-Q0l"/>
+                        <outlet property="collectionView" destination="JfI-qt-dbd" id="l1r-J8-CV1"/>
+                        <outlet property="mapView" destination="JNI-Pb-qxM" id="ASN-bD-WLN"/>
+                        <outlet property="nameField" destination="4QE-cW-8Sq" id="Qfs-Hy-u5N"/>
+                        <outlet property="saveBarButton" destination="lI7-oK-qeu" id="qyL-Hb-JEy"/>
+                        <outlet property="tableView" destination="9OL-9e-xjv" id="R2z-EG-YsC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rJ7-DN-Wz3" userLabel="First Responder" sceneMemberID="firstResponder"/>

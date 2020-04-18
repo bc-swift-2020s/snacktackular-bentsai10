@@ -2,7 +2,7 @@
 //  Spot.swift
 //  Snacktacular
 //
-//  Created by Ben Tsai on 4/11/20.
+//  Created by Ben Tsai on 4/8/20.
 //  Copyright © 2020 John Gallaugher. All rights reserved.
 //
 
@@ -11,43 +11,50 @@ import CoreLocation
 import Firebase
 import MapKit
 
-class Spot: NSObject, MKAnnotation{
+class Spot: NSObject, MKAnnotation {
     var name: String
     var address: String
     var coordinate: CLLocationCoordinate2D
     var averageRating: Double
-    var numOfReviews: Int
+    var numberOfReviews: Int
     var postingUserID: String
-    var documentID:String
+    var documentID: String //unique identifier for each individual spot
     
-    var longitude: CLLocationDegrees{
+    var longitude: CLLocationDegrees {
         return coordinate.longitude
     }
-    
-    var latitude: CLLocationDegrees{
+    var latitude: CLLocationDegrees {
         return coordinate.latitude
     }
-    var title: String?{
-        return name
-    }
-    var subtitle: String?{
-        return address
-    }
-    var dictionary:[String: Any]{
-        return ["name": name, "address": address, "longitude": longitude, "latitude": latitude, "averageRating": averageRating, "numberOfReviews": numOfReviews,  "postingUserID": postingUserID]
+    
+    var location: CLLocation{
+        return CLLocation(latitude: latitude, longitude: longitude)
     }
     
+    var title: String? {
+        return name
+    }
+    
+    var subtitle: String? {
+        return address
+    }
+    
+    var dictionary: [String: Any]{
+        return ["name": name, "address": address, "longitude": longitude, "latitude": latitude, "averageRating": averageRating, "numberOfReviews": numberOfReviews, "postingUserID": postingUserID]
+    }
+    
+    
     init(name: String, address: String, coordinate: CLLocationCoordinate2D, averageRating: Double, numberOfReviews: Int, postingUserID: String, documentID: String){
-        self.name = name
+        self.name = name //if you haven't initalized values, you have to have a default initializer
         self.address = address
         self.coordinate = coordinate
         self.averageRating = averageRating
-        self.numOfReviews = numberOfReviews
+        self.numberOfReviews = numberOfReviews
         self.postingUserID = postingUserID
         self.documentID = documentID
     }
     
-    convenience override init(){
+    override convenience init(){
         self.init(name: "", address: "", coordinate: CLLocationCoordinate2D(), averageRating: 0.0, numberOfReviews: 0, postingUserID: "", documentID: "")
     }
     
@@ -61,39 +68,42 @@ class Spot: NSObject, MKAnnotation{
         let numberOfReviews = dictionary["numberOfReviews"] as! Int? ?? 0
         let postingUserID = dictionary["postingUserID"] as! String? ?? ""
         self.init(name: name, address: address, coordinate: coordinate, averageRating: averageRating, numberOfReviews: numberOfReviews, postingUserID: postingUserID, documentID: "")
+        
     }
     
-    func saveData(completed: @escaping (Bool)-> ()){
+    func saveData(completed: @escaping (Bool) -> ()) {
         let db = Firestore.firestore()
-        //grab the user id
-        guard let postingUserID = (Auth.auth().currentUser?.uid)else{
-            print("Error")
+        //Grab the userID
+        guard let postingUserID = (Auth.auth().currentUser?.uid) else {
+            print("ERROR: Could not save data because we don't have a valid postingUserID")
             return completed(false)
         }
         self.postingUserID = postingUserID
-        //create dictionary representing data to save
+        //create the dictionary representing the data we want to save
         let dataToSave = self.dictionary
-        //if we Have saved a record, we will have a documentID
-        if self.documentID != ""{
+        //if we have saved a record, we'll have a documentID
+        if self.documentID != "" {
             let ref = db.collection("spots").document(self.documentID)
             ref.setData(dataToSave){ (error) in
-                if let error = error{
-                    print("Error")
-                   completed(false)
-                }else{
+                if let error = error {
+                    print("ERROR: updating document \(self.documentID)\(error.localizedDescription)")
+                    completed(false)
+                }else {
+                    print("Document updated with ref ID \(ref.documentID)")
                     completed(true)
                 }
             }
-        }else{
-            var ref: DocumentReference? = nil
-            ref = db.collection("spots").addDocument(data: dataToSave){(error) in
-                if let error = error{
-                    print("Error")
-                   completed(false)
-                }else{
+            
+        }else {
+            var ref: DocumentReference? = nil //let firestore create the new documentID
+            ref = db.collection("spots").addDocument(data: dataToSave) {error in
+               if let error = error {
+                    print("ERROR: creating new document \(self.documentID)\(error.localizedDescription)")
+                    completed(false)
+                }else {
+                print("new ocument created with ref ID \(ref?.documentID ?? "unknown")")
                     completed(true)
                 }
-                
             }
         }
     }

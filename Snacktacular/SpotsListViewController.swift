@@ -4,6 +4,7 @@
 //
 //  Created by John Gallaugher on 3/23/18.
 //  Copyright © 2018 John Gallaugher. All rights reserved.
+//
 
 import UIKit
 import CoreLocation
@@ -11,32 +12,37 @@ import Firebase
 import FirebaseUI
 import GoogleSignIn
 
+
 class SpotsListViewController: UIViewController {
-    
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortSegmentedControl: UISegmentedControl!
     var spots: Spots!
     var authUI: FUIAuth!
+    var locationManager: CLLocationManager!
+    var currentLocation: CLLocation!
+    
+    override func viewWillAppear(_ animated: Bool) {
+        getLocation()
+        spots.loadData {
+            self.sortBasedOnSegmentPressed()
+            self.tableView.reloadData()
+        }
+        navigationController?.setToolbarHidden(false, animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         authUI = FUIAuth.defaultAuthUI()
         // You need to adopt a FUIAuthDelegate protocol to receive callback
         authUI.delegate = self
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.isHidden = true
         
         spots = Spots()
-       
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        spots.loadData {
-            self.sortBasedOnSegmentPressed()
-            self.tableView.reloadData()
-        }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -59,61 +65,73 @@ class SpotsListViewController: UIViewController {
         }
     }
     
+    func showAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(alertAction)
+        present(alertController, animated: true, completion: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowSpot"{
+        if segue.identifier == "ShowSpot" {
             let destination = segue.destination as! SpotDetailViewController
-            let selecetedIndexPath = tableView.indexPathForSelectedRow!
-            destination.spot = spots.spotsArray[selecetedIndexPath.row]
-        }else{
-            if let selectedIndexPath = tableView.indexPathForSelectedRow{
-                tableView.deselectRow(at: selectedIndexPath, animated: true)
+            let selectedIndexPath = tableView.indexPathForSelectedRow!
+            destination.spot = spots.spotArray[selectedIndexPath.row]
+        } else {
+            if let selectedIndexPath = tableView.indexPathForSelectedRow {
+                tableView.deselectRow(at: selectedIndexPath, animated: true)//unselect anything that's been previously selected
             }
-            
         }
     }
     
     func sortBasedOnSegmentPressed(){
-        switch sortSegmentedControl.selectedSegmentIndex{
-        case 0://A-Z
-            spots.spotsArray.sort(by: {$0.name <  $1.name})
-        //case 1://Closest
-            
-        //case 2://Avg. rating
-            
+        switch sortSegmentedControl.selectedSegmentIndex {
+        case 0: //A-Z
+            spots.spotArray.sort(by: {$0.name < $1.name})
+        case 1: //Closest
+            spots.spotArray.sort(by: {$0.location.distance(from: currentLocation) < $1.location.distance(from: currentLocation)})
+        case 2: //Avg Rtg
+            print("TODO")
         default:
-            print("You shouldn't be here!!!")
+            print("***ERROR: Hey you shouldn't have goten here, our segmented control should just have 3 segments.")
         }
-    }
-    @IBAction func sortSegmentPressed(_ sender: UISegmentedControl) {
-        
+        tableView.reloadData()
     }
     
+    @IBAction func sortSegmentPressed(_ sender: UISegmentedControl) {
+        sortBasedOnSegmentPressed()
+    }
     
     @IBAction func signOutPressed(_ sender: UIBarButtonItem) {
-        do{
-            try authUI.signOut()
+        do {
+            try authUI!.signOut()
+            print("^^^ Successfully signed out!")
             tableView.isHidden = true
             signIn()
-        }catch{
+        }catch {
             tableView.isHidden = true
-            print("Error, couldn't sign out")
+            print("***ERROR: Couldn't sign out")
         }
-        
     }
     
 }
 
-extension SpotsListViewController: UITableViewDelegate, UITableViewDataSource{
+extension SpotsListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return spots.spotsArray.count
+        return spots.spotArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SpotsTableViewCell
-        cell.nameLabel.text = spots.spotsArray[indexPath.row].name
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SpotsTableViewCell //because it's a custom cell
+        cell.nameLabel.text = spots.spotArray[indexPath.row].name
+        if let currentLocation = currentLocation{
+            cell.currentLocation = currentLocation
+        }
+        cell.configureCell(spot: spots.spotArray[indexPath.row])
         return cell
     }
     
+    //called whenever your table needs to know the height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
@@ -124,17 +142,19 @@ extension SpotsListViewController: FUIAuthDelegate{
     func application(_ app: UIApplication, open url: URL,
                      options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as! String?
-      if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
-        return true
-      }
-      // other URL handling goes here.
-      return false
-    }
-    func authUI(_ authUI: FUIAuth, didSignInWith user: User?, error: Error?) {
-        if let user = user{
-            tableView.isHidden = false
+        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
+            return true
         }
-      // handle user and error as necessary
+        // other URL handling goes here.
+        return false
+    }
+    
+    func authUI(_ authUI: FUIAuth, didSignInWith user: User?, error: Error?) {
+        // handle user and error as necessary
+        if let user = user {
+            tableView.isHidden = false
+            print("***We signed in with the user \(user.email ?? "unknown email")")
+        }
     }
     
     func authPickerViewController(forAuthUI authUI: FUIAuth) -> FUIAuthPickerViewController {
@@ -149,5 +169,58 @@ extension SpotsListViewController: FUIAuthDelegate{
         logoImageView.contentMode = .scaleAspectFit
         loginViewController.view.addSubview(logoImageView)
         return loginViewController
+        
     }
 }
+
+extension SpotsListViewController: CLLocationManagerDelegate {
+    
+    func getLocation(){
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+    }
+    
+    func handleLocationAuthorizationStatus(status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .authorizedAlways, .authorizedWhenInUse:
+            locationManager.requestLocation()
+        case .denied:
+            showAlertToPrivacySettings(title: "User has not authorized location services", message: "Select 'Settings' below to open device settings and enable location services for this app.")
+        case .restricted:
+            showAlert(title: "Location services denied", message: "It may be that parental controls are restricting location use in this app")
+        }
+    }
+    
+    func showAlertToPrivacySettings(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
+            print("Something went wrong getting the UIApplication.openSettingsURLString")
+            return
+        }
+        let settingsActions = UIAlertAction(title: "Settings", style: .default) { value in
+            UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(settingsActions)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        handleLocationAuthorizationStatus(status: status)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        currentLocation = locations.last
+        print("CURRENT LOCATION IS \(currentLocation.coordinate.longitude)\(currentLocation.coordinate.latitude)")
+        sortBasedOnSegmentPressed()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to get user location.")
+    }
+}
+
+
