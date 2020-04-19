@@ -124,10 +124,10 @@ class SpotDetailViewController: UIViewController {
     }
     func cameraOrLibararyAlert(){
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let cameraAction = UIAlertAction(title: "Camera", style: .default, handler: nil){_ in
+        let cameraAction = UIAlertAction(title: "Camera", style: .default){_ in
             self.accessCamera()
         }
-        let photoLibraryAction = UIAlertAction(title: "Photo Libaray", style: .default, handler: nil){_ in
+        let photoLibraryAction = UIAlertAction(title: "Photo Library", style: .default){_ in
             self.accessLibrary()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
