@@ -21,12 +21,15 @@ class ReviewTableViewController: UITableViewController {
     @IBOutlet weak var buttonsBackgroundView: UIView!
     @IBOutlet var starButtonCollection: [UIButton]!
     
+    var spot: Spot!
+    var review: Review!
     var rating = 0{
         didSet{
             for starButton in starButtonCollection{
                 let image = UIImage(named: (starButton.tag < rating ? "star-filled": "star-empty"))
                 starButton.setImage(image, for: .normal)
             }
+            review.rating = rating
         }
     }
     
@@ -35,6 +38,16 @@ class ReviewTableViewController: UITableViewController {
         let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
         tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
+        
+        guard let spot = spot else{
+            print("ERROR")
+            return
+        }
+        nameLabel.text = spot.name
+        addressLabel.text = spot.address
+        if review == nil{
+            review = Review()
+        }
     }
     func leaveViewController() {
         let isPresentingInAddMode = presentingViewController is UINavigationController
@@ -58,7 +71,14 @@ class ReviewTableViewController: UITableViewController {
         leaveViewController()
     }
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
+        review.title = reviewTitle.text!
+        review.text = reviewView.text!
+        review.saveData(spot: spot, completed: { (success) in
+            if success{
+                self.leaveViewController()
+            }else{
+                print("Error couldn't leave view controller")
+            }
+        })
     }
-    
-    
 }
