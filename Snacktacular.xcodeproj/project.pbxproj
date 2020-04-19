@@ -12,6 +12,7 @@
 		1F0986B024429E8F000310F2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F0986AF24429E8F000310F2 /* GoogleService-Info.plist */; };
 		1F6D50FD244BC9490052FD97 /* Double+roundTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D50FC244BC9490052FD97 /* Double+roundTo.swift */; };
 		1F6D50FF244BCB410052FD97 /* UIView+addBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D50FE244BCB410052FD97 /* UIView+addBorder.swift */; };
+		1F6D5101244BD6FB0052FD97 /* ReviewTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D5100244BD6FB0052FD97 /* ReviewTableViewController.swift */; };
 		3E0F960A20659D9000AE450D /* SpotsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0F960920659D9000AE450D /* SpotsTableViewCell.swift */; };
 		3E0F960C2065A17500AE450D /* SpotDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0F960B2065A17500AE450D /* SpotDetailViewController.swift */; };
 		3E0F960E2065AB6400AE450D /* SpotReviewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0F960D2065AB6400AE450D /* SpotReviewsTableViewCell.swift */; };
@@ -31,6 +32,7 @@
 		1F0986AF24429E8F000310F2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1F6D50FC244BC9490052FD97 /* Double+roundTo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+roundTo.swift"; sourceTree = "<group>"; };
 		1F6D50FE244BCB410052FD97 /* UIView+addBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+addBorder.swift"; sourceTree = "<group>"; };
+		1F6D5100244BD6FB0052FD97 /* ReviewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewTableViewController.swift; sourceTree = "<group>"; };
 		3E0F960920659D9000AE450D /* SpotsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsTableViewCell.swift; sourceTree = "<group>"; };
 		3E0F960B2065A17500AE450D /* SpotDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailViewController.swift; sourceTree = "<group>"; };
 		3E0F960D2065AB6400AE450D /* SpotReviewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotReviewsTableViewCell.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				3E0F960B2065A17500AE450D /* SpotDetailViewController.swift */,
 				3E0F960D2065AB6400AE450D /* SpotReviewsTableViewCell.swift */,
 				3E0F960F2065AC1A00AE450D /* SpotPhotosCollectionViewCell.swift */,
+				1F6D5100244BD6FB0052FD97 /* ReviewTableViewController.swift */,
 				1F6D50FC244BC9490052FD97 /* Double+roundTo.swift */,
 				1F6D50FE244BCB410052FD97 /* UIView+addBorder.swift */,
 				3E8390E3206597F600512DEA /* Main.storyboard */,
@@ -290,6 +293,7 @@
 				3E0F96102065AC1A00AE450D /* SpotPhotosCollectionViewCell.swift in Sources */,
 				3E0F960C2065A17500AE450D /* SpotDetailViewController.swift in Sources */,
 				3E0F960E2065AB6400AE450D /* SpotReviewsTableViewCell.swift in Sources */,
+				1F6D5101244BD6FB0052FD97 /* ReviewTableViewController.swift in Sources */,
 				1F6D50FF244BCB410052FD97 /* UIView+addBorder.swift in Sources */,
 				3E0F960A20659D9000AE450D /* SpotsTableViewCell.swift in Sources */,
 				1F0986AC24429255000310F2 /* Spot.swift in Sources */,
