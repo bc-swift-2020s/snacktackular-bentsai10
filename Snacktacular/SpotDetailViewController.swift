@@ -39,6 +39,8 @@ class SpotDetailViewController: UIViewController {
             
             spot = Spot() //will declare a spot with all empty values in there
             getLocation()
+            nameField.addBorder(width: 0.5, radius: 5.0, color: .black)
+            addressField.addBorder(width: 0.5, radius: 5.0, color: .black)
         } else {//viewing an existing spot, so editing should be disabled
             nameField.isEnabled = false
             addressField.isEnabled = false
